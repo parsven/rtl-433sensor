@@ -453,7 +453,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(552, 536)</value>
+      <value>(560, 440)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -500,7 +500,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(792, 752)</value>
+      <value>(696, 752)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -579,11 +579,42 @@
     </param>
     <param>
       <key>repeat</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>vlen</key>
       <value>1</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_message_debug</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1184, 488)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_message_debug_0</value>
     </param>
   </block>
   <block>
@@ -704,7 +735,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -794,7 +825,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(928, 748)</value>
+      <value>(872, 748)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -896,7 +927,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(720, 472)</value>
+      <value>(720, 424)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1051,7 +1082,7 @@ class blk(gr.basic_block):  # other base classes are basic_block, decim_block, i
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(624, 656)</value>
+      <value>(448, 656)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1082,7 +1113,7 @@ class blk(gr.basic_block):  # other base classes are basic_block, decim_block, i
     </param>
     <param>
       <key>_io_cache</key>
-      <value>('Baseband to bitstream', 'blk', [('level_threshold', '0.5'), ('time_threshold', '0.001'), ('sample_rate', '10'), ('guard_time', '0.01')], [('0', 'float')], [('0', 'byte')], 'Embedded Python Block example - a simple multiply const', ['guard_time', 'level_threshold', 'sample_rate', 'time_threshold'])</value>
+      <value>('pwm decode bitstream', 'blk', [('level_threshold', '0.5'), ('time_threshold', '0.001'), ('sample_rate', '10'), ('guard_time', '0.01')], [('0', 'float')], [('0', 'byte')], 'Embedded Python Block example - a simple multiply const', ['guard_time', 'level_threshold', 'sample_rate', 'time_threshold'])</value>
     </param>
     <param>
       <key>_source_code</key>
@@ -1105,7 +1136,7 @@ class blk(gr.basic_block):  # other base classes are basic_block, decim_block, i
         """arguments to this function show up as parameters in GRC"""
         gr.basic_block.__init__(
             self,
-            name='Baseband to bitstream',   # will show up in GRC
+            name='pwm decode bitstream',   # will show up in GRC
             in_sig=[np.float32],
             out_sig=[np.byte]
         )
@@ -1168,7 +1199,7 @@ class blk(gr.basic_block):  # other base classes are basic_block, decim_block, i
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(888, 616)</value>
+      <value>(848, 480)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1323,7 +1354,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>example_param</key>
@@ -1465,7 +1496,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(888, 520)</value>
+      <value>(864, 344)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1486,6 +1517,110 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     <param>
       <key>sample_time</key>
       <value>0.5</value>
+    </param>
+  </block>
+  <block>
+    <key>epy_block</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_io_cache</key>
+      <value>('bitstream to pdu', 'blk', [], [('0', 'byte')], [('binary_pdu_out', 'message')], 'Embedded Python Block example - a simple multiply const', [])</value>
+    </param>
+    <param>
+      <key>_source_code</key>
+      <value>"""
+Embedded Python Blocks:
+
+Each time this file is saved, GRC will instantiate the first class it finds
+to get ports and parameters of your block. The arguments to __init__  will
+be the parameters. All of them are required to have default values!
+"""
+
+import numpy as np
+import pmt
+from gnuradio import gr
+
+def bitsToByte(bits):
+    return 128*bits[0] + 64*bits[1] + 32*bits[2] + 16*bits[3] + 8*bits[4] + 4*bits[5] + 2*bits[6] + 1*bits[7]
+
+
+
+
+class blk(gr.basic_block):  # other base classes are basic_block, decim_block, interp_block
+    """Embedded Python Block example - a simple multiply const"""
+
+    def __init__(self):  # only default arguments here
+        """arguments to this function show up as parameters in GRC"""
+        gr.basic_block.__init__(
+            self,
+            name='bitstream to pdu',   # will show up in GRC
+            in_sig=[np.byte],
+            out_sig=[]
+        )
+        self.accumulated = []
+        self.message_port_register_out(pmt.intern("binary_pdu_out"))
+
+
+    def sendMessage(self, accumulated):
+        bytes = []
+        bytes.append(bitsToByte(accumulated[0:8]))
+        bytes.append(bitsToByte(accumulated[8:16]))
+        bytes.append(bitsToByte(accumulated[16:24]))
+        bytes.append(bitsToByte(accumulated[24:32]))
+        bytes.append(bitsToByte(accumulated[32:40]))
+        bytes.append(bitsToByte(accumulated[40:48]))
+        send_pmt = pmt.make_u8vector(len(bytes), 0)
+
+        #print bytes
+
+        for i in range(len(bytes)):
+            pmt.u8vector_set(send_pmt, i, bytes[i])
+        self.message_port_pub(pmt.intern('binary_pdu_out'), pmt.cons(pmt.PMT_NIL, send_pmt))
+        #print "PAR" + str(send_pmt) + "PAR2"
+
+    def general_work(self, input_items, output_items):
+        input = input_items[0]
+        i = 0
+        self.consume(0,len(input))
+        while i &lt; len(input):
+            current = input[i]
+            if current == -1:
+                if len(self.accumulated) == 6 * 8 +1:
+                    self.sendMessage(self.accumulated[1:49])
+                    #print self.accumulated
+                #else:
+                    #print "len=" + str(len(self.accumulated))
+                self.accumulated = []
+            else:
+                self.accumulated.append(current)
+                # print "len=" + str(len(self.accumulated))
+
+            i += 1
+        return 0
+</value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1040, 504)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>epy_block_3</value>
     </param>
   </block>
   <block>
@@ -1595,7 +1730,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1080, 652)</value>
+      <value>(1056, 652)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -1922,7 +2057,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1128, 764)</value>
+      <value>(1048, 764)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -2580,7 +2715,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1128, 488)</value>
+      <value>(1136, 400)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -3492,6 +3627,12 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>epy_block_0_0</source_block_id>
+    <sink_block_id>epy_block_3</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>epy_block_1</source_block_id>
     <sink_block_id>blocks_null_sink_0</sink_block_id>
     <source_key>0</source_key>
@@ -3508,6 +3649,12 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     <sink_block_id>qtgui_time_sink_x_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>1</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>epy_block_3</source_block_id>
+    <sink_block_id>blocks_message_debug_0</sink_block_id>
+    <source_key>binary_pdu_out</source_key>
+    <sink_key>print_pdu</sink_key>
   </connection>
   <connection>
     <source_block_id>low_pass_filter_0</source_block_id>
