@@ -1624,6 +1624,124 @@ class blk(gr.basic_block):  # other base classes are basic_block, decim_block, i
     </param>
   </block>
   <block>
+    <key>epy_block</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_io_cache</key>
+      <value>('Detect stuck bits in PDUs', 'blk', [], [('pdu_in', 'message')], [], 'Embedded Python Block example - a simple multiply const', [])</value>
+    </param>
+    <param>
+      <key>_source_code</key>
+      <value>"""
+Embedded Python Blocks:
+
+Each time this file is saved, GRC will instantiate the first class it finds
+to get ports and parameters of your block. The arguments to __init__  will
+be the parameters. All of them are required to have default values!
+"""
+
+import numpy as np
+from gnuradio import gr
+import pmt
+import string
+import time
+import datetime
+
+
+
+
+class blk(gr.sync_block):  # other base classes are basic_block, decim_block, interp_block
+    """Embedded Python Block example - a simple multiply const"""
+
+    def __init__(self):  # only default arguments here
+        """arguments to this function show up as parameters in GRC"""
+        gr.sync_block.__init__(
+            self,
+            name='Detect stuck bits in PDUs',   # will show up in GRC
+            in_sig=[],
+            out_sig=[]
+        )
+        # if an attribute with the same name as a parameter is found,
+        # a callback is registered (properties work, too).
+        self.message_port_register_in(pmt.intern("pdu_in"))
+        self.set_msg_handler(pmt.intern("pdu_in"), self.pdu_in)
+        self.anded = [0xff,0xff,0xff,0xff,0xff,0xff]
+        self.ored = [0x00,0x00,0x00,0x00,0x00,0x00]
+    def work(self, input_items, output_items):
+        """example: multiply with constant"""
+        output_items[0][:] = input_items[0] * self.example_param
+        return len(output_items[0])
+
+    def pdu_in(self, msg_pmt):
+        """ Receiver a u8vector on the input port, and print it out. """
+        # Collect metadata, convert to Python format:
+        meta = pmt.to_python(pmt.car(msg_pmt))
+        # Collect message, convert to Python format:
+        msg = pmt.cdr(msg_pmt)
+        # Make sure it's a u8vector
+        if not pmt.is_u8vector(msg):
+            print "[ERROR] Received invalid message type.\n"
+            return
+        # Convert to string:
+        msg_str = "".join([chr(x) for x in pmt.u8vector_elements(msg)])
+        # Just for good measure, and to avoid attacks, let's filter again:
+        msg_str = filter(lambda x: x in string.printable, msg_str)
+        # Print string, and if available, the metadata:
+
+        elements = pmt.u8vector_elements(msg)
+        self.anded[0] &amp;= elements[0]
+        self.anded[1] &amp;= elements[1]
+        self.anded[2] &amp;= elements[2]
+        self.anded[3] &amp;= elements[3]
+        self.anded[4] &amp;= elements[4]
+        self.anded[5] &amp;= elements[5]
+
+        self.ored[0] |= elements[0]
+        self.ored[1] |= elements[1]
+        self.ored[2] |= elements[2]
+        self.ored[3] |= elements[3]
+        self.ored[4] |= elements[4]
+        self.ored[5] |= elements[5]
+
+        hex_elements = " ".join([format(x, '02x') for x in elements])
+        hex_anded = " ".join([format(x, '02x') for x in self.anded])
+        hex_ored = " ".join([format(x, '02x') for x in self.ored])
+
+        ts = time.time()
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        print "At time: " + st
+        print " Pdu received:   " +  hex_elements
+        print " Accumulated AND " + hex_anded
+        print " Accumulated  OR " + hex_ored
+        if meta is not None:
+            print "[METADATA]: ", meta
+</value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1128, 280)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>epy_block_4</value>
+    </param>
+  </block>
+  <block>
     <key>low_pass_filter</key>
     <param>
       <key>beta</key>
@@ -5056,6 +5174,12 @@ class blk(gr.basic_block):  # other base classes are basic_block, decim_block, i
     <sink_block_id>blocks_message_debug_0</sink_block_id>
     <source_key>binary_pdu_out</source_key>
     <sink_key>print_pdu</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>epy_block_3</source_block_id>
+    <sink_block_id>epy_block_4</sink_block_id>
+    <source_key>binary_pdu_out</source_key>
+    <sink_key>pdu_in</sink_key>
   </connection>
   <connection>
     <source_block_id>low_pass_filter_0</source_block_id>
